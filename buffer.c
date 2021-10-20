@@ -22,7 +22,7 @@ long init_buffer_421() {
 	writeHead->data = 0;
 	writeHead->next = NULL;
 
-	
+
 	struct node_421 *curr = writeHead;
 
 	for (int i = 0; i < 19; i++) {
@@ -32,25 +32,30 @@ long init_buffer_421() {
 
 		curr->next = temp;
 		curr = curr->next;
-		
-		printf("Time\n");
+
+		if (i == 18) {
+			curr->next = writeHead;
+		}
 	}
+
 
 	struct ring_buffer_421 buffer = {.length = 20, .read = readHead, .write = writeHead};
 
-
+	//--------------------------------------------------------------------------------------------
+	// This part (and below) needs to go in delete_buffer
 	struct node_421 *currentDelete = writeHead;
 
 	for (int i = 0; i < 20; i++) {
 		struct node_421 *temp = currentDelete->next;
-		
+
 		free(currentDelete);
 		currentDelete = NULL;
 		currentDelete = temp;
 	}
 
 	free(readHead);		// This will go in delete_buffer
-	//free(writeHead);	// This will go in delete_buffer
+	//free(writeHead);	// At the beginning, I thought I needed this, but I'm pretty sure my for-loop deletes all of the nodes in writeHead
+
 }
 
 
