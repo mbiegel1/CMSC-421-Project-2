@@ -16,16 +16,16 @@ long init_buffer_421() {
     if (buffer == NULL) {
     
         buffer = (ring_buffer_421_t*)malloc(sizeof(ring_buffer_421_t));
+        buffer->length = 0;
         
         buffer->write = (node_421_t*)malloc(sizeof(node_421_t));
         buffer->write->data = 0;
+        
         
         // This is supposed to switch bufferWrite to bufferRead and
         // have bufferRead point to itself...not sure if it works completely
         buffer->read = buffer->write;    
         buffer->read->next = buffer->read;
-            
-        buffer->length = 1;
         
         for (int i = 0; i < 19; i++) {
             buffer->write = (node_421_t*)malloc(sizeof(node_421_t));
@@ -36,7 +36,6 @@ long init_buffer_421() {
             buffer->read->next = buffer->write;
             buffer->read = buffer->write; 
             
-            buffer->length += 1;   
         }
         
         int bufferLength = buffer->length;
@@ -45,6 +44,7 @@ long init_buffer_421() {
         int nodeData = buffer->read->data;
         printf("Data of read node: %d\n\n", nodeData);
         
+        buffer->write = buffer->read;
     
         return 0;
     }
@@ -108,10 +108,49 @@ long init_buffer_421() {
 
 
 long insert_buffer_421(int i) {
+    
+    if (buffer != NULL) {
+        if (buffer->length < 20) {
+            
+            buffer->write->data = i;
+            buffer->write = buffer->write->next;
+            
+            buffer->length += 1;
+        } else {
+            
+            printf("\nBuffer is already at max capacity\n");
+            return -1;
+        }
+        
+        return 0;
+    }
+    
+    return -1;
+    
 }
 
 
 long print_buffer_421() {
+    
+    if (buffer != NULL) {
+        
+        printf("\nRelative to read node position in linked list:\n");
+        
+        // Should I use the read pointer from buffer solely for iterating?
+        node_421_t *temp = buffer->read;
+        //printf("\n");        
+        for (int i = 0; i < buffer->length; i++) {
+            
+            printf("Node %d: ", i+1);
+            printf("%d\n", temp->data);
+            
+            temp = temp->next;
+        }
+        
+        return 0;
+    }
+    
+    return -1;
 }
 
 
@@ -119,7 +158,7 @@ long print_buffer_421() {
 long delete_buffer_421() {        
         
         if (buffer != NULL) {    
-            // Testing memory deletion
+
             for (int i = 0; i < 20; i++) {
                 node_421_t *temp = buffer->read->next;
                 buffer->read->next = buffer->read->next->next;
@@ -139,9 +178,35 @@ long delete_buffer_421() {
 int main() {
 
     printf("BEFORE BUFFER CREATED\n");
-	init_buffer_421();
-	printf("AFTER BUFFER CREATED\n");
-	delete_buffer_421();
-    printf("FREED BUFFER MEMORY\n");
+	if (init_buffer_421() == 0) {
+	    printf("BUFFER SUCCESSFULLY CREATED; returning 0");	
+	    
+	    insert_buffer_421(1);
+	    insert_buffer_421(2);
+	    insert_buffer_421(3);
+	    insert_buffer_421(4);
+	    insert_buffer_421(5);
+	    insert_buffer_421(6);
+	    insert_buffer_421(7);
+	    insert_buffer_421(8);
+  	    /*insert_buffer_421(8);
+  	    insert_buffer_421(8);
+  	    insert_buffer_421(8);
+  	    insert_buffer_421(8);
+  	    insert_buffer_421(8);
+  	    insert_buffer_421(8);
+  	    insert_buffer_421(8);
+  	    insert_buffer_421(8);
+  	    insert_buffer_421(8);
+  	    insert_buffer_421(8);
+  	    insert_buffer_421(8);
+  	    insert_buffer_421(8);*/
+	    
+	    print_buffer_421();
+	    
+	    delete_buffer_421();
+        printf("FREED BUFFER MEMORY\n");
+	}
+
 
 }
