@@ -7,7 +7,7 @@ long insert_buffer_421(int);
 long print_buffer_421(void);
 long delete_buffer_421(void);
 
-
+// Global Variable
 static ring_buffer_421_t *buffer = NULL;
 
 long init_buffer_421() {
@@ -16,9 +16,21 @@ long init_buffer_421() {
     if (buffer == NULL) {
     
         buffer = (ring_buffer_421_t*)malloc(sizeof(ring_buffer_421_t));
+
+        // malloc failed, returning NULL; thus do not continue
+        if (buffer == NULL) {
+            return -1;
+        }
+        
         buffer->length = 0;
         
         buffer->write = (node_421_t*)malloc(sizeof(node_421_t));
+        
+        // malloc failed, returning NULL; thus do not continue
+        if (buffer->write == NULL) {
+            return -1;
+        }
+        
         buffer->write->data = 0;
         
         
@@ -29,6 +41,11 @@ long init_buffer_421() {
         
         for (int i = 0; i < 19; i++) {
             buffer->write = (node_421_t*)malloc(sizeof(node_421_t));
+            
+            // malloc failed, returning NULL; thus do not continue
+            if (buffer->write == NULL) {
+                return -1;
+            }
 
             buffer->write->data = 0;
             buffer->write->next = buffer->read->next;
@@ -38,70 +55,15 @@ long init_buffer_421() {
             
         }
         
-        int bufferLength = buffer->length;
-        printf("\nLength of buffer: %d\n", bufferLength);
-        
-        int nodeData = buffer->read->data;
-        printf("Data of read node: %d\n\n", nodeData);
-        
         buffer->write = buffer->read;
     
         return 0;
     }
     
-    
+    // Else, the buffer wasn't initialized,
+    // so we don't initialize it and we return -1;
+    // Fail for any other reason? What kind of reason?
     return -1;
-
-/*
-	node_421_t  *readHead = (node_421_t*)malloc(sizeof(node_421_t));
-    node_421_t  *writeHead = (node_421_t*)malloc(sizeof(node_421_t));
-
-	readHead->data = 0;
-	readHead->next = NULL;
-
-	// Creates the first node in the ring buffer
-	// For loop below creates 19 more nodes for a total of 20 nodes
-	writeHead->data = 0;
-	writeHead->next = NULL;
-
-
-	node_421_t *curr = writeHead;
-
-	for (int i = 0; i < 19; i++) {
-		node_421_t *temp = (node_421_t*)malloc(sizeof(node_421_t));
-		temp->data = 0;
-		temp->next = NULL;
-
-		curr->next = temp;
-		curr = curr->next;
-
-		if (i == 18) {
-			curr->next = writeHead;
-		}
-	}
-
-
-	buffer = (ring_buffer_421_t*)malloc(sizeof(ring_buffer_421_t));
-	buffer->length = 20;
-	buffer->read = readHead;
-	buffer->write = writeHead;
-
-	//--------------------------------------------------------------------------------------------
-	// This part (and below) needs to go in delete_buffer
-	node_421_t *currentDelete = writeHead;
-
-	for (int i = 0; i < 20; i++) {
-		node_421_t *temp = currentDelete->next;
-
-		free(currentDelete);
-		currentDelete = NULL;
-		currentDelete = temp;
-	}
-
-	free(readHead);		// This will go in delete_buffer
-	free(buffer);
-	//free(writeHead);	// At the beginning, I thought I needed this, but I'm pretty sure my for-loop deletes all of the nodes in writeHead
-*/
 }
 
 
@@ -117,24 +79,28 @@ long insert_buffer_421(int i) {
             
             buffer->length += 1;
         } else {
-            
-            printf("\nBuffer is already at max capacity\n");
+
+            // Buffer is already full with 20 nodes, so
+            // we don't add the integer and we return -1
+            printf("\nBuffer is already at max capacity");
             return -1;
         }
         
         return 0;
     }
-    
+
+    // Else, the buffer wasn't initialized,
+    // so we don't add the integer and we return -1    
     return -1;
     
 }
 
-
+// Change the formatting?
 long print_buffer_421() {
     
     if (buffer != NULL) {
         
-        printf("\nRelative to read node position in linked list:\n");
+        printf("Number of elements in buffer: %d\n", buffer->length);
         
         // Should I use the read pointer from buffer solely for iterating?
         node_421_t *temp = buffer->read;
@@ -146,10 +112,12 @@ long print_buffer_421() {
             
             temp = temp->next;
         }
-        
+        // Everything worked properly, so return 0
         return 0;
     }
     
+    // Else, the buffer wasn't initialized,
+    // so we don't print and return -1.
     return -1;
 }
 
@@ -157,56 +125,71 @@ long print_buffer_421() {
 
 long delete_buffer_421() {        
         
-        if (buffer != NULL) {    
+    if (buffer != NULL) {    
 
-            for (int i = 0; i < 20; i++) {
-                node_421_t *temp = buffer->read->next;
-                buffer->read->next = buffer->read->next->next;
-            
-                free(temp);
-            }
+        for (int i = 0; i < 20; i++) {
+            node_421_t *temp = buffer->read->next;
+            buffer->read->next = buffer->read->next->next;
         
-            free(buffer);
-            
-            return 0;
+            free(temp);
+            temp = NULL;
         }
-
+    
+        free(buffer);
+        buffer = NULL;
         
-        return -1;
+        return 0;
+    }
+
+    // Else, the buffer wasn't initialized,
+    // so we don't delete and return -1.
+    return -1;
 }
 
+// Delete this for kernel code
 int main() {
 
-    printf("BEFORE BUFFER CREATED\n");
-	if (init_buffer_421() == 0) {
-	    printf("BUFFER SUCCESSFULLY CREATED; returning 0");	
-	    
-	    insert_buffer_421(1);
-	    insert_buffer_421(2);
-	    insert_buffer_421(3);
-	    insert_buffer_421(4);
-	    insert_buffer_421(5);
-	    insert_buffer_421(6);
-	    insert_buffer_421(7);
-	    insert_buffer_421(8);
-  	    /*insert_buffer_421(8);
-  	    insert_buffer_421(8);
-  	    insert_buffer_421(8);
-  	    insert_buffer_421(8);
-  	    insert_buffer_421(8);
-  	    insert_buffer_421(8);
-  	    insert_buffer_421(8);
-  	    insert_buffer_421(8);
-  	    insert_buffer_421(8);
-  	    insert_buffer_421(8);
-  	    insert_buffer_421(8);
-  	    insert_buffer_421(8);*/
-	    
-	    print_buffer_421();
-	    
-	    delete_buffer_421();
-        printf("FREED BUFFER MEMORY\n");
-	}
+    //Testing
+
+    int buff_func_before_initialized = print_buffer_421();
+    printf("Trying to print before initialized (expected output = -1): %d\n", 
+        buff_func_before_initialized);
+    
+    buff_func_before_initialized = insert_buffer_421(5);
+    printf("Trying to insert before initialized (expected output = -1): %d\n", 
+        buff_func_before_initialized); 
+    
+    buff_func_before_initialized = delete_buffer_421();
+    printf("Trying to delete before initialized (expected output = -1): %d\n", 
+        buff_func_before_initialized);
 
 
+
+    int doubleInitialization = init_buffer_421();    
+    printf("\nInitializing buffer first time (expected output = 0): %d\n", 
+        doubleInitialization);   
+    
+    doubleInitialization = init_buffer_421();    
+    printf("Initializing buffer second time (expected output = -1): %d\n", 
+        doubleInitialization);
+    
+    printf("\nAttempting to insert 22 elements; expect 2 max capactiy error messages:");
+    for (int i = 0; i < 20; i++) {
+        insert_buffer_421(i+1);
+    }
+    
+    insert_buffer_421(21);
+    insert_buffer_421(-1);
+    
+    printf("\n");
+    print_buffer_421();
+        
+    
+    int bufferDoubleDelete = delete_buffer_421();
+    printf("\nDeleteing buffer first time (expected output = 0): %d\n", 
+        bufferDoubleDelete);
+    
+    bufferDoubleDelete = delete_buffer_421();
+    printf("Deleteing buffer second time (expected output = -1): %d\n", 
+        bufferDoubleDelete);
 }
