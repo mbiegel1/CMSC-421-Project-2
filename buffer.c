@@ -50,7 +50,6 @@ long init_buffer_421() {
     }
     
     
-    
     return -1;
 
 /*
