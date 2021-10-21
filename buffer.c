@@ -25,7 +25,7 @@ long init_buffer_421() {
         buffer->read = buffer->write;    
         buffer->read->next = buffer->read;
             
-        buffer->length += 1;
+        buffer->length = 1;
         
         for (int i = 0; i < 19; i++) {
             buffer->write = (node_421_t*)malloc(sizeof(node_421_t));
@@ -39,12 +39,11 @@ long init_buffer_421() {
             buffer->length += 1;   
         }
         
-        // Can't print buffer using printf?????
         int bufferLength = buffer->length;
-        //printf("Length of buffer: %d\n", bufferLength);
+        printf("\nLength of buffer: %d\n", bufferLength);
         
         int nodeData = buffer->read->data;
-        printf("Data of read node: %d\n", nodeData);
+        printf("Data of read node: %d\n\n", nodeData);
         
     
         return 0;
