@@ -20,7 +20,7 @@
   
 # Thought Process:
 
-    Process for Approaching Each System Call:
+    ###Process for Approaching Each System Call:
         1) `long init_buffer_421(void)
         I knew that a link list was required, and I knew how to implement a 
         linked list; however, I was unsure why there were 2 nodes `read` and 
@@ -51,7 +51,7 @@
         if everything went smoothly; else I returned -1 if the buffer was 
         already NULL.
     
-    Process for Adding the Methods as System Calls:
+    ###Process for Adding the Methods as System Calls:
         For this part, I started out in user space, so the first step to swtich 
         to kernel space was to change all of the `malloc()` to `kmalloc()`, 
         `free()` to `kfree()`, and `printf()` to `printk()`. `kmalloc()` takes 
