@@ -42,6 +42,7 @@ int main(int argc, char *argv[]) {
     
     // Uncomment to cause insert to throw an error
     //insert = insert_buffer_syscall(-1);
+    
     print = print_buffer_syscall();
     delete = delete_buffer_syscall();
     
@@ -50,15 +51,29 @@ int main(int argc, char *argv[]) {
     printf("\nprint number: %d", print);
     printf("\ndelete number: %d\n", delete);
     
+    int failFlag = 0;
+    
     if(init < 0) {
         perror("init syscall failed");
-    } else if (delete < 0) {
+        failFlag = 1;
+    } 
+    
+    if (delete < 0) {
         perror("delete syscall failed");
-    } else if (insert < 0) {
+        failFlag = 1;
+    } 
+    
+    if (insert < 0) {
         perror("insert syscall failed");
-    } else if (print < 0) {
+        failFlag = 1;
+    } 
+    
+    if (print < 0) {
         perror("print syscall failed");
-    } else {
+        failFlag = 1;
+    } 
+    
+    if (failFlag != 1){
         printf("All syscalls ran successfully, check dmesg output\n");
     }
     
